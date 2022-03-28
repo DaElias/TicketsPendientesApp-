@@ -1,7 +1,6 @@
 // referencias
 const lblNuevoTicket = document.getElementById("lblNuevoTicket");
 const btnCrear = document.getElementById("btnCrear");
-
 const socket = io();
 
 socket.on("connect", () => {
@@ -23,6 +22,6 @@ btnCrear.addEventListener("click", () => {
     lblNuevoTicket.innerText = ticket;
   });
 
-  
+
 
 });

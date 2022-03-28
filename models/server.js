@@ -1,59 +1,49 @@
-const express = require('express');
-const cors = require('cors');
-
-const { socketController } = require('../sockets/controller');
+const express = require("express");
+const cors = require("cors");
+const socket = require("socket.io");
+const http = require("http");
+const { socketController } = require("../sockets/controller");
 
 class Server {
+  constructor() {
+    this.app = express();
+    this.port = process.env.PORT || 8080;
+    this.server = http.createServer(this.app);
+    this.io = socket(this.server);
 
-    constructor() {
-        this.app    = express();
-        this.port   = process.env.PORT;
-        this.server = require('http').createServer( this.app );
-        this.io     = require('socket.io')( this.server );
+    this.paths = {};
 
-        this.paths = {};
+    // Middlewares
+    this.middlewares();
 
-        // Middlewares
-        this.middlewares();
+    // Rutas de mi aplicación
+    this.routes();
 
-        // Rutas de mi aplicación
-        this.routes();
+    // Sockets
+    this.sockets();
+  }
 
-        // Sockets
-        this.sockets();
-    }
+  middlewares() {
+    // CORS
+    this.app.use(cors());
 
-    middlewares() {
+    // Directorio Público
+    this.app.use(express.static("public"));
+  }
 
-        // CORS
-        this.app.use( cors() );
+  routes() {
+    // this.app.use( this.paths.auth, require('../routes/auth'));
+  }
 
-        // Directorio Público
-        this.app.use( express.static('public') );
+  sockets() {
+    this.io.on("connection", socketController);
+  }
 
-    }
-
-    routes() {
-        
-        // this.app.use( this.paths.auth, require('../routes/auth'));
-        
-    }
-
-    sockets() {
-
-        this.io.on('connection', socketController );
-
-    }
-
-    listen() {
-        this.server.listen( this.port, () => {
-            console.log('Servidor corriendo en puerto', this.port );
-        });
-    }
-
+  listen() {
+    this.server.listen(this.port, () => {
+      console.log("Servidor corriendo en puerto", this.port);
+    });
+  }
 }
-
-
-
 
 module.exports = Server;

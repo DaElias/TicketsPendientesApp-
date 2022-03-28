@@ -13,9 +13,10 @@ const socketController = (socket) => {
 
     // TODO: Notificar hay un nuevo ticket de asignar
     socket.broadcast.emit("tickets", tickerControl.tickesLenght());
-
-
+    socket.broadcast.emit("estado-actual", tickerControl.ultimos4);
   });
+
+  socket.emit("estado-actual", tickerControl.ultimos4);
 
   socket.on("atender-ticket", ({ escritorio }, callback) => {
     if (!escritorio) {
